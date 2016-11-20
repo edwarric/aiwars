@@ -1,0 +1,26 @@
+Codes:
+
+All requests take parameters username and password
+
+log in
+Log in, request user data (wins, losses, elo, etc.)
+
+create account
+Create account, returns usual log in data
+
+upload AI
+Upload new user AI code, takes parameter "code" and returns response code 200 on success
+
+change AI name
+Changes the name of a given user's AI, takes parameter "newname", returns user account data
+
+change AI availability
+Makes AI available to challenge or unavailable, takes parameter "state" (0 for unavailable, 1 for available)
+
+get available opponents
+Returns a list of opponents the user can challenge as an XML file with a table called "data" with the string stored in a sub element called "users" formatted 
+as "user1#user2#user3#userN#"
+
+challenge
+Challenge another user
+

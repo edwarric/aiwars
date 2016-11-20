@@ -1,0 +1,38 @@
+<head>
+
+    <script>
+
+        function sendRequest() {
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (this.readyState === XMLHttpRequest.DONE) {
+                    if (this.status === 200) {
+                        document.getElementById("poster").innerHTML = this.responseText;
+                    } else {
+                        console.log("No success")
+                    }
+                }
+            };
+            request.open("POST", "https://httpexperiments-sambrose.c9users.io");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            var parameters = "username=NewPerson&password=balls&requestcode=create account";
+            request.send(parameters);
+        }
+    </script>
+
+    <link rel="stylesheet" href="Style/style.css">
+</head>
+<body>
+    <img src="Images/russian-ball.jpg">
+    <form method="post">
+        First name:
+        <br>
+        <input type="text" name="firstname"><br>
+        <input type="submit">
+    </form>
+    <button onclick="sendRequest()">Click me</button>
+    <br>
+    <p id="poster">
+        <a href="https://httpexperiments-sambrose.c9users.io/newpage">Click here for another page!</a>
+    </p>
+</body>

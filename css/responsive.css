@@ -1,0 +1,33 @@
+/* iPhone 4 = 320px */
+
+@media screen and (min-width: 768px) {
+}
+
+/* iPad */
+
+@media screen and (min-width: 768px) {
+    .nav-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 50%;
+        max-width: 900px;
+        margin: 0 2.5% 0 0;
+        padding: 0;
+        list-style: none;
+        font-weight: 500;
+        font-size: 18px;
+    }
+    h1 {
+        font-size: 60px;
+    }
+}
+
+/* max iPad */
+
+@media screen and (min-width: 1024px) {
+    .site-logo {
+        font-size: 30px;
+    }
+}
