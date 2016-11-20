@@ -17,34 +17,63 @@
         <link href="../css/style.css" rel="stylesheet" type="text/css"/>
         <link href="../css/responsive.css" rel="stylesheet" type="text/css"/>
         <script>
-            function submitText() {
-            var request = new XMLHttpRequest();
-            request.onreadystatechange = function () {
+
+            function getUsers () {
+                var usersRequest = new XMLHttpRequest();
+                usersRequest.onreadystatechange = function () {
                 if (this.readyState === XMLHttpRequest.DONE) {
                     if (this.status === 200) {
-                        document.getElementById("poster").innerHTML = this.responseText;
+                        //Load users onto the user table
+                        var userArray = this.responseText.split("#");
+                        var table = document.getElementById("challenge-table");
+                        for (i = 0;i<userArray.length;i++) {
+                            if (userArray[i] != ""){
+                                console.log(userArray[i]);
+                                var row = table.insertRow(1);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                cell1.innerHTML = userArray[i];
+                                cell2.innerHTML = '<a href="/play">Challenge</a>';
+                            };
+                        };
                     } else {
                         console.log("No success")
                     }
                 }
             };
-            //request.open("POST", "https://httpexperiments-sambrose.c9users.io");
-            //request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            myCode = document.getElementById("text").value;
-            console.log(myCode);
-            console.log(document.cookie)
-            function getCookie(name) {
-                var value = "; " + document.cookie;
-                var parts = value.split("; " + name + "=");
-                if (parts.length == 2) return parts.pop().split(";").shift();
+            var sessionID = String(document.cookie.split("=")[1]);
+            var actualID = sessionID.substr(1,sessionID.length - 2);
+            usersRequest.open("POST", "https://httpexperiments-sambrose.c9users.io");
+            usersRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            parameters = "sessionID=" + actualID + "&requestcode=get available opponents"
+            usersRequest.send(parameters);
+            };
+            window.onload = getUsers()
+            function submitText () {
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (this.readyState === XMLHttpRequest.DONE) {
+                    if (this.status === 200) {
+                        window.alert("AI successfully saved.");
+                    } else {
+                        console.log("No success")
+                    }
+                }
             };
             
-            console.log(getCookie("sessionID"));
+            request.open("POST", "https://httpexperiments-sambrose.c9users.io");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            myCode = document.getElementById("text").value;
+            var sessionID = String(document.cookie.split("=")[1]);
+            var actualID = sessionID.substr(1,sessionID.length - 2);
             
-            var parameters = "username=NewPerson&password=balls&requestcode=create account";
+            console.log(actualID);
             
-            //request.send(parameters);
-        }
+            
+            var parameters = "sessionID=" + actualID + "&requestcode=upload AI&code=" + myCode;
+            
+            request.send(parameters);
+            };
         </script>
             
     </head>
@@ -66,10 +95,10 @@
                     </a>
                     <ul class="nav-top">
                         <li>
-                            <a href="upload.html">Upload</a>
+                            <a href="#upload">Upload</a>
                         </li>
                         <li>
-                            <a href="challenge.html">Challenge</a>
+                            <a href="#challenge">Challenge</a>
                         </li>
                         <li>
                             $username<br/>
@@ -88,69 +117,26 @@
                         <div id="down-arrow">v</div>
                     </a>
                 </div>
-                
-                
-
-                <!-- <video playsinline autoplay muted loop poster="img/site-logo-brain.png" id="bgvid">
-                    <source src="vid/aiwars-intro.mp4" type="video/mp4"/>
-                    <source src="aiwars.intro-webm.webm" type="video/webm"/>
-                </video> -->
             </div>
             
-            
-            
-            <div class="item">
-                <!-- Two needed cos of scrollbar issue -->
-            <div class="form-background f-left"></div>
-            <div class="form-background f-right"></div>
-            <header class="nav-top-area">
-                <div class="nav-header item">
-                    <a href="index.html" class="site-logo">
-                        AIWARS
-                    </a>
-                    <ul class="nav-top">
-                        <li>
-                            <a href="upload.html">Upload</a>
-                        </li>
-                        <li>
-                            <a href="challenge.html">Challenge</a>
-                        </li>
-                        <li>
-                            $username<br/>
-                            $user-score
-                        </li>
-                    </ul>
-                </div>
-            </header>
-            <div class="text-container">
+            <div class="text-container" id="upload">
                 <textarea type="text" id="text" name="text_name" class="mytext"></textarea>
             </div>
             <div class="button">
-                <button onclick="submitText()">Submit</button>
-            </div>
-                
+                <button onclick="submitText()">Upload file</button>
             </div>
             
             
-            <div class="item">
-                
-                
-                <table class="challenge-table">
-                <thead>
-                    <th scope="col">Players</th>
-                    <th scope="col" class="table-availability">Availability</th>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="table-username">Username</td>
-                        <td class="table-challenge">
-                            <a href="#">Challenge</a>
-                        </td>
-                    </tr>
-                </tbody>
-
-            </table>
-                
+            <div class="item" id="challenge" style="display:flex; justify-content:center;">
+                <table class="challenge-table" id="challenge-table">
+                    <thead>
+                        <th scope="col">Players</th>
+                        <th scope="col" class="table-availability">Availability</th>
+                    </thead>
+                    <tbody>
+                    
+                    </tbody>
+                </table>
             </div>
             
             

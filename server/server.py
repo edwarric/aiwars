@@ -142,7 +142,7 @@ class myHandler(BaseHTTPRequestHandler):
         userSessionID = str(self.generateSessionID(10))
         sessions[userSessionID] = username
         print(userSessionID)
-        self.send_header("Set-Cookie","<session-id>=" + userSessionID)
+        self.send_header("Set-Cookie","<session-id>=<" + userSessionID + ">")
         self.end_headers()
         print(sessions)
         self.wfile.write(bytes(accountFile,"utf-8"))
@@ -209,7 +209,7 @@ class myHandler(BaseHTTPRequestHandler):
         
     
     def do_POST(self):
-        
+        global sessions
         dbConn = sqlite3.Connection("users.db")
         dbConn.text_factory = str
         dbConnCurs = dbConn.cursor()
@@ -244,7 +244,7 @@ class myHandler(BaseHTTPRequestHandler):
                         return
                     
                     try:
-                        dbConnCurs.execute("insert into accounts values (?,?,?,?,?,?,?,?,?)",(currentID,username,password,0,0,0,1200,username,0))
+                        dbConnCurs.execute("insert into accounts values (?,?,?,?,?,?,?,?,?)",(currentID,username,password,0,0,0,1200,username,1))
                         dbConn.commit()
                         userAI = open(os.path.join("User computers",username + ".py"),"w")
                         self.send_myaccount(dbConnCurs,username)
@@ -279,10 +279,10 @@ class myHandler(BaseHTTPRequestHandler):
                     return    
                 
                 self.send_myaccount(dbConnCurs,username)
-    
+                return
                 #Logged in requests below here
             
-            sessionID = postvars["sessionID"]
+            sessionID = postvars["sessionID"][0]
             username = sessions[sessionID]
                             
             if requestCode == "upload AI":
@@ -333,15 +333,20 @@ class myHandler(BaseHTTPRequestHandler):
                 userList = dbConnCurs.fetchall()
                 listString = ""
                 for x in userList:
-                    if x != username:
+                    print("Name in list:",x,"Username:",username)
+                    if x[0] != username:
                         listString += x[0] + "#"
+                
+                '''
                 rawXML = ET.Element("data")
                 userString = ET.SubElement(rawXML,"users")
                 userString.text = listString
+                '''
+                
                 self.send_response(200)
                 self.send_header("Content-type","text/xml")
                 self.end_headers()
-                self.wfile.write(ET.tostring(rawXML))
+                self.wfile.write(bytes(listString,"utf-8"))
             
             elif requestCode == "change AI availability":
                 newState = int(postvars["state"][0])
@@ -358,7 +363,7 @@ class myHandler(BaseHTTPRequestHandler):
                 
         #If not, sends code 400 response
                 
-        except TypeError:
+        except NameError:
             self.send_400()
             
         dbConn.close()
